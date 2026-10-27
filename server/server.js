@@ -15,9 +15,6 @@ const analyticsRoutes = require('./routes/analytics.routes');
 const app = express();
 const PORT = process.env.PORT || 5000;
 
-// Connect to Database (with intelligent zero-config embedded fallback)
-connectDB();
-
 // Middlewares
 app.use(cors({
   origin: true,
@@ -59,15 +56,30 @@ app.use((err, req, res, next) => {
   });
 });
 
-// Start Server
+// Start Server strictly after database connection
+const startServer = async () => {
+  try {
+    // 1. Establish connection to MongoDB Atlas first
+    await connectDB();
+
+    // 2. Start Express listener only after successful database connection
+    app.listen(PORT, () => {
+      console.log(`\n======================================================`);
+      console.log(`🌿 Folio Personal Knowledge Workspace Server Running`);
+      console.log(`📡 URL: http://localhost:${PORT}`);
+      console.log(`🛠️  Health Check: http://localhost:${PORT}/api/health`);
+      console.log(`======================================================\n`);
+    });
+  } catch (err) {
+    console.error(`\n🛑 Server startup aborted: Failed to establish MongoDB Atlas connection.`);
+    console.error(`   Error details: ${err.message}`);
+    console.error(`   Please check your network access and MongoDB Atlas IP whitelist.\n`);
+    process.exit(1);
+  }
+};
+
 if (process.env.NODE_ENV !== 'test') {
-  app.listen(PORT, () => {
-    console.log(`\n======================================================`);
-    console.log(`🌿 Folio Personal Knowledge Workspace Server Running`);
-    console.log(`📡 URL: http://localhost:${PORT}`);
-    console.log(`🛠️  Health Check: http://localhost:${PORT}/api/health`);
-    console.log(`======================================================\n`);
-  });
+  startServer();
 }
 
 module.exports = app;

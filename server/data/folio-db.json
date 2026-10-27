@@ -2,7 +2,7 @@
   "users": [
     {
       "_id": "583972e5e6ab9e9cbacc45cf",
-      "name": "Alex Chen",
+      "name": "Jeff",
       "email": "alex.chen@folio.workspace",
       "password": "$2a$10$CVEGjY4eds2d.p06T2iWn.nrcCTV7v6bmF1kQLZ96iQ8fHUrD7HWK",
       "avatar": "https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=250&q=80",
@@ -11,7 +11,7 @@
         "defaultView": "grid"
       },
       "createdAt": "2026-10-27T17:47:57.047Z",
-      "updatedAt": "2026-10-27T17:47:57.047Z"
+      "updatedAt": "2026-10-27T17:55:11.577Z"
     }
   ],
   "notes": [
