@@ -300,34 +300,227 @@ Consensus algorithms allow a collection of machines to work as a coherent group 
     relatedNotes: []
   });
 
+  const note8 = await NoteModel.create({
+    user: userId,
+    title: 'PostgreSQL Indexing: B-Tree, GIN, and BRIN Performance',
+    content: `# PostgreSQL Indexing Strategies
+
+Choosing the optimal index type transforms query response times from linear table scans to logarithmic index lookups:
+
+### 1. B-Tree (Default)
+Standard balanced search tree for equality and range queries (\`<, <=, =, >=, >\`).
+\`\`\`sql
+CREATE INDEX idx_notes_created_at ON notes (created_at DESC);
+\`\`\`
+
+### 2. GIN (Generalized Inverted Index)
+Ideal for multi-value types: JSONB attributes, full-text search vectors (\`tsvector\`), and array memberships:
+\`\`\`sql
+CREATE INDEX idx_notes_tags_gin ON notes USING gin (tags);
+-- Enables instant queries like:
+SELECT * FROM notes WHERE tags @> ARRAY['distributed-systems'];
+\`\`\`
+
+### 3. BRIN (Block Range Index)
+Extremely compact index for physically sorted, naturally appending time-series tables:
+\`\`\`sql
+CREATE INDEX idx_logs_timestamp_brin ON system_logs USING brin (event_timestamp);
+\`\`\`
+
+### Performance Analysis
+Always verify planner decisions with \`EXPLAIN (ANALYZE, BUFFERS)\` to check for Bitmap Heap Scans vs Sequential Scans.`,
+    type: 'code',
+    codeLanguage: 'sql',
+    tags: ['postgres', 'database', 'sql', 'indexing', 'performance'],
+    collectionId: colCS._id || colCS.id,
+    isFavorite: true,
+    isPinned: false,
+    createdAt: new Date(Date.now() - 14 * 86400000),
+    updatedAt: new Date(Date.now() - 8 * 86400000),
+    relatedNotes: []
+  });
+
+  const note9 = await NoteModel.create({
+    user: userId,
+    title: 'React 19 Server Actions & Optimistic UI Architecture',
+    content: `# React 19 Server Functions & Optimistic Updates
+
+React 19 formalizes Server Functions and the \`useOptimistic\` hook to dramatically reduce client-side state boilerplate and latency.
+
+### The useOptimistic Hook
+Allows immediate optical UI reflection before network confirmation, with automatic rollback if the mutation fails:
+
+\`\`\`typescript
+import { useOptimistic, useTransition } from 'react';
+
+function FavoriteButton({ note, onToggle }: { note: Note; onToggle: () => Promise<void> }) {
+  const [isPending, startTransition] = useTransition();
+  const [optimisticFavorite, setOptimisticFavorite] = useOptimistic(
+    note.isFavorite,
+    (state, update: boolean) => update
+  );
+
+  const handleClick = () => {
+    startTransition(async () => {
+      setOptimisticFavorite(!optimisticFavorite);
+      await onToggle();
+    });
+  };
+
+  return (
+    <button onClick={handleClick} disabled={isPending} className="star-btn">
+      {optimisticFavorite ? '★ Starred' : '☆ Star'}
+    </button>
+  );
+}
+\`\`\`
+
+### Key Architectural Guidelines
+- Treat Server Functions as RPC endpoints with strict input validation via Zod schemas.
+- Ensure mutations return updated database entities to avoid client cache desynchronization.`,
+    type: 'code',
+    codeLanguage: 'typescript',
+    tags: ['react', 'typescript', 'frontend', 'server-actions', 'optimistic-ui'],
+    collectionId: colWeb._id || colWeb.id,
+    isFavorite: false,
+    isPinned: false,
+    createdAt: new Date(Date.now() - 11 * 86400000),
+    updatedAt: new Date(Date.now() - 5 * 86400000),
+    relatedNotes: []
+  });
+
+  const note10 = await NoteModel.create({
+    user: userId,
+    title: 'Vector Search & Retrieval-Augmented Generation (RAG)',
+    content: `# Vector Search, Embeddings & RAG Architecture
+
+Vector embeddings map unstructured natural language documents into dense geometric vector spaces where semantic proximity mirrors conceptual similarity.
+
+### 1. Vector Indexing: HNSW vs IVF
+- **HNSW (Hierarchical Navigable Small World)**: Graph-based multi-layer indexing with ultra-fast sub-millisecond approximate nearest neighbor (ANN) retrieval and high recall.
+- **IVFFlat (Inverted File Index)**: Clustering-based partitioning; lower RAM footprint, slightly lower recall during high dimensionality.
+
+### 2. Chunking & Overlap
+- **Window Size**: 256–512 tokens with 10–20% overlap avoids clipping critical multi-sentence semantic thoughts.
+- **Metadata Tagging**: Always attach source URL, parent section header, and creation timestamps to each chunk.
+
+### 3. Cross-Encoder Reranking
+First pass: Bi-Encoder vector similarity grabs top 50 candidates.
+Second pass: Cross-Encoder reranker scores (query, chunk) pairs to return the top 5 highest-relevance contexts to the LLM prompt.`,
+    type: 'research',
+    tags: ['vector-search', 'rag', 'embeddings', 'ai', 'hnsw'],
+    collectionId: colAI._id || colAI.id,
+    isFavorite: true,
+    isPinned: false,
+    createdAt: new Date(Date.now() - 9 * 86400000),
+    updatedAt: new Date(Date.now() - 4 * 86400000),
+    relatedNotes: []
+  });
+
+  const note11 = await NoteModel.create({
+    user: userId,
+    title: 'Designing Cache Invalidation & Stale-While-Revalidate Patterns',
+    content: `# Modern Caching Invalidation Architectures
+
+"There are only two hard things in Computer Science: cache invalidation and naming things." — Phil Karlton
+
+### Caching Topologies
+1. **Cache-Aside (Lazy Loading)**: Application queries Redis first. On cache miss, queries database, writes back to Redis with a TTL.
+2. **Write-Through**: Write to cache and database concurrently in a distributed transaction or CDC queue.
+
+### Preventing Cache Stampede (Thundering Herd)
+When a hot key expires under high concurrent load, thousands of simultaneous queries hit the backing database.
+- **Probabilistic Early Expiration (XFetch)**: Recompute cache key before actual expiry based on random beta distribution and computation time.
+- **Distributed Mutex (Redlock)**: Only one worker acquires lock to recompute; other requests wait or return stale cache.
+
+### Edge Caching: Stale-While-Revalidate
+\`\`\`http
+Cache-Control: public, max-age=60, stale-while-revalidate=600
+\`\`\`
+Serves cached response immediately while triggering asynchronous background refresh.`,
+    type: 'text',
+    tags: ['caching', 'system-design', 'redis', 'architecture', 'cdn'],
+    collectionId: colArchitecture._id || colArchitecture.id,
+    isFavorite: false,
+    isPinned: false,
+    createdAt: new Date(Date.now() - 6 * 86400000),
+    updatedAt: new Date(Date.now() - 2 * 86400000),
+    relatedNotes: []
+  });
+
+  const note12 = await NoteModel.create({
+    user: userId,
+    title: 'Clean Architecture & Domain-Driven Design (DDD) Bounded Contexts',
+    content: `# Domain-Driven Design (DDD) & Clean Architecture
+
+Structuring enterprise systems around ubiquitous language and explicit bounded contexts isolates core business invariants from infrastructure churn.
+
+### Core Strategic Building Blocks
+- **Entities**: Objects possessing unique identity that endures across state transitions (e.g., \`User\`, \`KnowledgeNote\`).
+- **Value Objects**: Immutable attributes defined strictly by their properties (e.g., \`EmailAddress\`, \`TagList\`).
+- **Aggregates**: Cluster of entities treated as a single transactional unit with an Aggregate Root guarding all invariant rules.
+- **Domain Events**: Meaningful state transitions published via an event bus (e.g., \`NoteRevisionCommitted\`, \`CollectionDeleted\`).
+
+### Anti-Corruption Layer (ACL)
+When integrating with third-party legacy APIs, implement an ACL adapter that translates external foreign schemas into pristine internal domain models, preventing domain model pollution.`,
+    type: 'research',
+    tags: ['domain-driven-design', 'architecture', 'clean-code', 'software-design', 'patterns'],
+    collectionId: colProjects._id || colProjects.id,
+    isFavorite: true,
+    isPinned: false,
+    createdAt: new Date(Date.now() - 5 * 86400000),
+    updatedAt: new Date(Date.now() - 1 * 86400000),
+    relatedNotes: []
+  });
+
   // Cross-link notes to construct a rich, meaningful Knowledge Graph!
   console.log('🔗 Constructing Knowledge Graph relationships...');
   await NoteModel.findByIdAndUpdate(note1._id || note1.id, {
-    relatedNotes: [note2._id || note2.id, note5._id || note5.id]
+    relatedNotes: [note2._id || note2.id, note5._id || note5.id, note9._id || note9.id]
   });
 
   await NoteModel.findByIdAndUpdate(note2._id || note2.id, {
-    relatedNotes: [note1._id || note1.id, note3._id || note3.id]
+    relatedNotes: [note1._id || note1.id, note3._id || note3.id, note8._id || note8.id]
   });
 
   await NoteModel.findByIdAndUpdate(note3._id || note3.id, {
-    relatedNotes: [note2._id || note2.id, note5._id || note5.id]
+    relatedNotes: [note2._id || note2.id, note5._id || note5.id, note8._id || note8.id, note11._id || note11.id]
   });
 
   await NoteModel.findByIdAndUpdate(note4._id || note4.id, {
-    relatedNotes: [note2._id || note2.id, note3._id || note3.id]
+    relatedNotes: [note2._id || note2.id, note3._id || note3.id, note10._id || note10.id]
   });
 
   await NoteModel.findByIdAndUpdate(note7._id || note7.id, {
-    relatedNotes: [note3._id || note3.id, note2._id || note2.id, note5._id || note5.id]
+    relatedNotes: [note3._id || note3.id, note2._id || note2.id, note5._id || note5.id, note11._id || note11.id, note12._id || note12.id]
   });
 
   await NoteModel.findByIdAndUpdate(note5._id || note5.id, {
-    relatedNotes: [note1._id || note1.id, note3._id || note3.id, note6._id || note6.id]
+    relatedNotes: [note1._id || note1.id, note3._id || note3.id, note6._id || note6.id, note9._id || note9.id, note12._id || note12.id]
   });
 
   await NoteModel.findByIdAndUpdate(note6._id || note6.id, {
-    relatedNotes: [note1._id || note1.id, note5._id || note5.id]
+    relatedNotes: [note1._id || note1.id, note5._id || note5.id, note9._id || note9.id]
+  });
+
+  await NoteModel.findByIdAndUpdate(note8._id || note8.id, {
+    relatedNotes: [note2._id || note2.id, note3._id || note3.id]
+  });
+
+  await NoteModel.findByIdAndUpdate(note9._id || note9.id, {
+    relatedNotes: [note1._id || note1.id, note5._id || note5.id, note6._id || note6.id]
+  });
+
+  await NoteModel.findByIdAndUpdate(note10._id || note10.id, {
+    relatedNotes: [note4._id || note4.id, note5._id || note5.id]
+  });
+
+  await NoteModel.findByIdAndUpdate(note11._id || note11.id, {
+    relatedNotes: [note3._id || note3.id, note7._id || note7.id, note8._id || note8.id]
+  });
+
+  await NoteModel.findByIdAndUpdate(note12._id || note12.id, {
+    relatedNotes: [note5._id || note5.id, note7._id || note7.id]
   });
 
   // 4. Create Revisions for realistic history
