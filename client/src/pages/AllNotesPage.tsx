@@ -182,20 +182,11 @@ export const AllNotesPage: React.FC = () => {
           {/* Export Button */}
           <button
             onClick={handleExportAllJson}
-            className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-paper-200 hover:bg-paper-300 text-charcoal-700 text-xs font-medium border border-paper-300 transition-colors"
+            className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-paper-100 hover:bg-paper-200 text-charcoal-700 text-xs font-medium border border-paper-300 transition-colors"
             title="Export filtered notes as JSON"
           >
-            <Download className="w-3.5 h-3.5" />
-            <span className="hidden sm:inline">Export</span>
-          </button>
-
-          {/* New Note Button */}
-          <button
-            onClick={onOpenNewNote}
-            className="flex items-center gap-1.5 px-3.5 py-1.5 rounded-lg bg-olive-500 hover:bg-olive-600 text-white text-xs font-semibold shadow-xs transition-colors"
-          >
-            <Plus className="w-4 h-4" />
-            <span>New Note</span>
+            <Download className="w-3.5 h-3.5 text-charcoal-500" />
+            <span className="hidden sm:inline">Export JSON</span>
           </button>
         </div>
       </div>

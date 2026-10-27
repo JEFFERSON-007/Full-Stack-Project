@@ -15,6 +15,7 @@ import {
   Folder
 } from 'lucide-react';
 import { Note, Collection, NoteType } from '../../types';
+import { formatContentExcerpt, formatDateLabel } from '../../utils/format';
 
 interface NoteCardProps {
   note: Note;
@@ -116,11 +117,11 @@ export const NoteCard: React.FC<NoteCardProps> = ({
 
         <div className="flex-1 min-w-0">
           <div className="flex items-center gap-2">
-            <h3 className="text-sm font-semibold text-charcoal-900 truncate">
+            <h3 className="text-sm font-semibold text-charcoal-900 truncate font-sans tracking-tight">
               {note.title}
             </h3>
             {collection && (
-              <span className="text-[10px] text-charcoal-500 bg-paper-200 px-2 py-0.5 rounded-full flex items-center gap-1">
+              <span className="text-[10px] text-charcoal-500 bg-paper-200 px-2 py-0.5 rounded-full flex items-center gap-1 font-sans">
                 <span
                   className="w-1.5 h-1.5 rounded-full"
                   style={{ backgroundColor: collection.color || '#596A50' }}
@@ -129,8 +130,8 @@ export const NoteCard: React.FC<NoteCardProps> = ({
               </span>
             )}
           </div>
-          <p className="text-xs text-charcoal-500 truncate mt-0.5">
-            {note.content?.slice(0, 100) || 'No additional content'}
+          <p className="text-xs text-charcoal-500 truncate mt-0.5 font-sans">
+            {formatContentExcerpt(note.content, 110)}
           </p>
         </div>
 
@@ -326,14 +327,14 @@ export const NoteCard: React.FC<NoteCardProps> = ({
         </div>
 
         {/* Title */}
-        <h3 className="text-base font-semibold text-charcoal-900 group-hover:text-olive-700 line-clamp-2 transition-colors mb-2 leading-snug">
+        <h3 className="text-[15px] font-semibold text-charcoal-900 group-hover:text-olive-700 line-clamp-2 transition-colors mb-2 leading-snug tracking-tight font-sans">
           {note.title}
         </h3>
 
         {/* Content Preview */}
         {note.type === 'code' ? (
           <div className="bg-charcoal-900 text-paper-100 font-mono text-[11px] p-2.5 rounded-lg mb-3 line-clamp-3 overflow-hidden opacity-90 border border-charcoal-700">
-            {note.content || '// Code snippet'}
+            {formatContentExcerpt(note.content, 120)}
           </div>
         ) : note.type === 'link' && note.sourceUrl ? (
           <div className="mb-3">
@@ -347,13 +348,13 @@ export const NoteCard: React.FC<NoteCardProps> = ({
               <ExternalLink className="w-3 h-3 flex-shrink-0" />
               <span className="truncate">{note.sourceUrl}</span>
             </a>
-            <p className="text-xs text-charcoal-600 line-clamp-2 mt-2 leading-relaxed">
-              {note.content}
+            <p className="text-xs text-charcoal-600 line-clamp-2 mt-2 leading-relaxed font-sans">
+              {formatContentExcerpt(note.content, 90)}
             </p>
           </div>
         ) : (
-          <p className="text-xs text-charcoal-600 line-clamp-3 mb-3 leading-relaxed">
-            {note.content || 'No additional content provided.'}
+          <p className="text-xs text-charcoal-600 line-clamp-3 mb-3 leading-relaxed font-sans">
+            {formatContentExcerpt(note.content, 130)}
           </p>
         )}
       </div>

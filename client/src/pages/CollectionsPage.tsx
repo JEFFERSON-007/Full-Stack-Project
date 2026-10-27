@@ -145,7 +145,7 @@ export const CollectionsPage: React.FC = () => {
                 <div className="flex items-center justify-between pt-3 border-t border-paper-200 text-xs">
                   <span className="flex items-center gap-1.5 text-charcoal-600 font-medium">
                     <BookOpen className="w-3.5 h-3.5 text-charcoal-400" />
-                    <span>{col.noteCount ?? 0} notes</span>
+                    <span>{col.noteCount ?? 0} {(col.noteCount ?? 0) === 1 ? 'note' : 'notes'}</span>
                   </span>
 
                   <span className="text-olive-600 group-hover:translate-x-0.5 transition-transform flex items-center gap-1 text-[11px] font-medium">

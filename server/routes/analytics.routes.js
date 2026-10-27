@@ -136,18 +136,23 @@ router.get('/', async (req, res) => {
     const revisionsRes = await NoteRevisionModel.find({ user: userId });
     const revisions = Array.isArray(revisionsRes) ? revisionsRes : await revisionsRes.exec();
 
-    // 7. Recently edited notes (top 5)
+    // 7. Recently edited notes (top 6)
     const recentlyEdited = [...notes]
       .sort((a, b) => new Date(b.updatedAt) - new Date(a.updatedAt))
-      .slice(0, 5)
+      .slice(0, 6)
       .map(n => ({
         id: n._id || n.id,
         title: n.title,
+        content: n.content || '',
         type: n.type,
         tags: n.tags,
         collectionId: n.collectionId,
+        codeLanguage: n.codeLanguage,
+        sourceUrl: n.sourceUrl,
         updatedAt: n.updatedAt,
-        isFavorite: n.isFavorite
+        createdAt: n.createdAt,
+        isFavorite: n.isFavorite,
+        isPinned: n.isPinned
       }));
 
     // 8. Pinned notes

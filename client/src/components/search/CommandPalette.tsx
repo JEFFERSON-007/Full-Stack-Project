@@ -3,6 +3,7 @@ import { Search, X, BookOpen, Code, Link as LinkIcon, Sparkles, Star, Tag, Folde
 import { Note, Collection, NoteType } from '../../types';
 import { notesService } from '../../services/notes.service';
 import { collectionsService } from '../../services/collections.service';
+import { formatContentExcerpt } from '../../utils/format';
 
 interface CommandPaletteProps {
   isOpen: boolean;
@@ -207,7 +208,7 @@ export const CommandPalette: React.FC<CommandPaletteProps> = ({
                       )}
                     </div>
                     <p className="text-[11px] text-charcoal-600 line-clamp-1 mt-0.5">
-                      {note.content?.slice(0, 120) || 'Empty content'}
+                      {formatContentExcerpt(note.content, 110)}
                     </p>
                     <div className="flex items-center gap-2 mt-1.5 flex-wrap">
                       {note.tags?.slice(0, 3).map((tag) => (

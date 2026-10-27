@@ -82,6 +82,26 @@ export const DashboardPage: React.FC = () => {
     }
   };
 
+  const handleDeleteNote = async (noteId: string) => {
+    if (confirm('Delete this note permanently?')) {
+      try {
+        await notesService.deleteNote(noteId);
+        fetchAnalytics(timeRange);
+      } catch (err) {
+        console.error('Delete failed:', err);
+      }
+    }
+  };
+
+  const handleDuplicateNote = async (noteId: string) => {
+    try {
+      await notesService.duplicateNote(noteId);
+      fetchAnalytics(timeRange);
+    } catch (err) {
+      console.error('Duplicate failed:', err);
+    }
+  };
+
   // Greeting by hour
   const getGreeting = () => {
     const hour = new Date().getHours();
@@ -394,8 +414,8 @@ export const DashboardPage: React.FC = () => {
                 note={note}
                 collections={collections}
                 onEdit={onOpenEditNote}
-                onDelete={() => {}}
-                onDuplicate={() => {}}
+                onDelete={handleDeleteNote}
+                onDuplicate={handleDuplicateNote}
                 onToggleFavorite={async (id) => {
                   await notesService.toggleFavorite(id);
                   fetchAnalytics(timeRange);

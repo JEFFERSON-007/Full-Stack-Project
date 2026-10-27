@@ -58,8 +58,11 @@ const KnowledgeNode: React.FC<NodeProps> = ({ data, selected }) => {
           : 'border-paper-300 hover:border-paper-400'
       }`}
     >
-      <Handle type="target" position={Position.Top} className="w-2 h-2 !bg-olive-500 border-2 !border-white" />
-      <Handle type="source" position={Position.Bottom} className="w-2 h-2 !bg-olive-500 border-2 !border-white" />
+      {/* Cardinal Handles for natural connections */}
+      <Handle type="target" position={Position.Left} id="in-left" className="w-2 h-2 !bg-olive-500 border-2 !border-white" />
+      <Handle type="source" position={Position.Right} id="out-right" className="w-2 h-2 !bg-olive-500 border-2 !border-white" />
+      <Handle type="target" position={Position.Top} id="in-top" className="w-2 h-2 !bg-olive-500 border-2 !border-white" />
+      <Handle type="source" position={Position.Bottom} id="out-bottom" className="w-2 h-2 !bg-olive-500 border-2 !border-white" />
 
       <div className="flex items-center justify-between gap-2 mb-1.5">
         <div className="flex items-center gap-1.5">
@@ -157,10 +160,10 @@ export const KnowledgeGraphPage: React.FC = () => {
       colMap.set(String(c._id || c.id), c);
     }
 
-    // Compute nodes positions in an aesthetic layout
-    const radius = Math.max(260, filteredNotes.length * 40);
-    const centerX = 450;
-    const centerY = 320;
+    // Compute nodes positions in an aesthetic layout with generous spacing
+    const radius = Math.max(310, filteredNotes.length * 48);
+    const centerX = 500;
+    const centerY = 360;
 
     const newNodes = filteredNotes.map((note, index) => {
       const angle = (index / filteredNotes.length) * 2 * Math.PI;
@@ -213,13 +216,14 @@ export const KnowledgeGraphPage: React.FC = () => {
                 id: `edge-${pairKey}`,
                 source: sourceId,
                 target: targetId,
+                type: 'smoothstep',
                 animated: false,
-                style: { stroke: '#596A50', strokeWidth: 1.5, opacity: 0.7 },
+                style: { stroke: '#596A50', strokeWidth: 1.5, opacity: 0.75 },
                 markerEnd: {
                   type: MarkerType.ArrowClosed,
                   color: '#596A50',
-                  width: 12,
-                  height: 12,
+                  width: 10,
+                  height: 10,
                 },
               });
             }
@@ -241,8 +245,9 @@ export const KnowledgeGraphPage: React.FC = () => {
               id: `edge-shared-${pairKey}`,
               source: sourceId,
               target: otherId,
+              type: 'smoothstep',
               animated: true,
-              style: { stroke: '#BF765C', strokeWidth: 1.2, strokeDasharray: '4 4', opacity: 0.6 },
+              style: { stroke: '#BF765C', strokeWidth: 1.2, strokeDasharray: '4 4', opacity: 0.65 },
             });
           }
         }

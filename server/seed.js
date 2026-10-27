@@ -124,6 +124,8 @@ console.log('Sync script end');
     collectionId: colWeb._id || colWeb.id,
     isFavorite: true,
     isPinned: true,
+    createdAt: new Date(Date.now() - 17 * 86400000),
+    updatedAt: new Date(Date.now() - 16 * 86400000),
     relatedNotes: []
   });
 
@@ -152,6 +154,8 @@ Space complexity is O(N) where table resizes typically at load factor \`α > 0.7
     collectionId: colCS._id || colCS.id,
     isFavorite: true,
     isPinned: false,
+    createdAt: new Date(Date.now() - 14 * 86400000),
+    updatedAt: new Date(Date.now() - 13 * 86400000),
     relatedNotes: []
   });
 
@@ -188,6 +192,8 @@ Designing real-time event ingestion for IoT telemetry and user clickstream witho
     collectionId: colArchitecture._id || colArchitecture.id,
     isFavorite: true,
     isPinned: true,
+    createdAt: new Date(Date.now() - 10 * 86400000),
+    updatedAt: new Date(Date.now() - 9 * 86400000),
     relatedNotes: []
   });
 
@@ -213,6 +219,8 @@ Instead of performing a single attention function, Multi-Head Attention projects
     collectionId: colAI._id || colAI.id,
     isFavorite: false,
     isPinned: false,
+    createdAt: new Date(Date.now() - 7 * 86400000),
+    updatedAt: new Date(Date.now() - 6 * 86400000),
     relatedNotes: []
   });
 
@@ -238,6 +246,8 @@ A study on building high-performance offline-first web applications using Confli
     collectionId: colProjects._id || colProjects.id,
     isFavorite: false,
     isPinned: false,
+    createdAt: new Date(Date.now() - 4 * 86400000),
+    updatedAt: new Date(Date.now() - 3 * 86400000),
     relatedNotes: []
   });
 
@@ -259,6 +269,34 @@ Resource: https://practicaltypography.com/`,
     collectionId: colWeb._id || colWeb.id,
     isFavorite: true,
     isPinned: false,
+    createdAt: new Date(Date.now() - 2 * 86400000),
+    updatedAt: new Date(Date.now() - 1 * 86400000),
+    relatedNotes: []
+  });
+
+  const note7 = await NoteModel.create({
+    user: userId,
+    title: 'Distributed Consensus: Raft vs Multi-Paxos Protocol',
+    content: `# Raft vs Multi-Paxos in Distributed Systems
+
+Consensus algorithms allow a collection of machines to work as a coherent group that can survive failures of some of its members.
+
+### Core Differences
+- **Decomposed States**: Raft explicitly separates Leader Election, Log Replication, and Safety invariants.
+- **Leader Invariance**: In Raft, a leader is only elected if it possesses all committed log entries from prior terms (Leader Completeness Property).
+- **Membership Changes**: Raft utilizes joint consensus transition phases to dynamically reconfigure clusters without downtime.
+
+### Production Implementations
+- **Etcd**: Raft in Go (Kubernetes control plane)
+- **CockroachDB**: Multi-Raft consensus per range
+- **Chubby**: Paxos lock service at Google`,
+    type: 'research',
+    tags: ['distributed-systems', 'consensus', 'raft', 'system-design'],
+    collectionId: colArchitecture._id || colArchitecture.id,
+    isFavorite: true,
+    isPinned: false,
+    createdAt: new Date(Date.now() - 1 * 86400000),
+    updatedAt: new Date(Date.now() - 12 * 3600000),
     relatedNotes: []
   });
 
@@ -278,6 +316,10 @@ Resource: https://practicaltypography.com/`,
 
   await NoteModel.findByIdAndUpdate(note4._id || note4.id, {
     relatedNotes: [note2._id || note2.id, note3._id || note3.id]
+  });
+
+  await NoteModel.findByIdAndUpdate(note7._id || note7.id, {
+    relatedNotes: [note3._id || note3.id, note2._id || note2.id, note5._id || note5.id]
   });
 
   await NoteModel.findByIdAndUpdate(note5._id || note5.id, {

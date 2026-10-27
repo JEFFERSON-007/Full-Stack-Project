@@ -16,17 +16,25 @@
     background-color: #F7F6F2;
     color: #252720;
     font-family: 'DM Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    letter-spacing: -0.01em;
   }
 
-  h1, h2, h3, .font-editorial {
+  /* Reserved for major editorial display headings */
+  h1, .font-editorial {
     font-family: 'Instrument Serif', Georgia, Cambria, serif;
+    letter-spacing: -0.02em;
+  }
+
+  /* Clean, legible UI headings for cards and sections */
+  h2, h3, h4, h5, h6 {
+    font-family: 'DM Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
   }
 }
 
 /* Custom Scrollbar for a refined editorial feel */
 ::-webkit-scrollbar {
-  width: 6px;
-  height: 6px;
+  width: 5px;
+  height: 5px;
 }
 
 ::-webkit-scrollbar-track {
@@ -34,7 +42,7 @@
 }
 
 ::-webkit-scrollbar-thumb {
-  background: #D5D2C8;
+  background: #D8D5CB;
   border-radius: 9999px;
 }
 
@@ -48,7 +56,7 @@
 }
 
 .react-flow__controls {
-  box-shadow: 0 4px 12px rgba(37, 39, 32, 0.08) !important;
+  box-shadow: 0 4px 12px rgba(37, 39, 32, 0.06) !important;
   border-radius: 8px !important;
   overflow: hidden !important;
   border: 1px solid #E2DFD7 !important;

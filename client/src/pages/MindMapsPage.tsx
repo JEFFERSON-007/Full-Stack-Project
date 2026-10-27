@@ -28,7 +28,9 @@ import {
   FolderOpen,
   ChevronDown,
   Layers,
-  ArrowRight
+  ArrowRight,
+  X,
+  HelpCircle
 } from 'lucide-react';
 import { MindMap, MindMapSummary, Note } from '../types';
 import { mindmapsService } from '../services/mindmaps.service';
@@ -63,13 +65,13 @@ const MindMapCustomNode: React.FC<NodeProps> = ({ id, data, selected }) => {
 
   return (
     <div
-      className={`relative group rounded-xl bg-white border-2 transition-all shadow-card p-3 min-w-[150px] max-w-[240px] ${
+      className={`relative group rounded-xl bg-white border-[1.5px] transition-all shadow-xs hover:shadow-card p-3 min-w-[150px] max-w-[240px] ${
         selected ? 'ring-2 ring-offset-2 ring-olive-500' : ''
       }`}
       style={{ borderColor: nodeColor }}
     >
-      <Handle type="target" position={Position.Left} className="w-2.5 h-2.5 !bg-charcoal-700 border-2 !border-white" />
-      <Handle type="source" position={Position.Right} className="w-2.5 h-2.5 !bg-charcoal-700 border-2 !border-white" />
+      <Handle type="target" position={Position.Left} className="w-2 h-2 !bg-olive-600 border border-white hover:scale-125 transition-transform" />
+      <Handle type="source" position={Position.Right} className="w-2 h-2 !bg-olive-600 border border-white hover:scale-125 transition-transform" />
 
       {/* Node Content */}
       <div className="flex items-start justify-between gap-1">
@@ -158,6 +160,7 @@ export const MindMapsPage: React.FC = () => {
 
   // Note linking modal state
   const [selectedNodeForLinking, setSelectedNodeForLinking] = useState<string | null>(null);
+  const [showTips, setShowTips] = useState(false);
 
   const [nodes, setNodes, onNodesChange] = useNodesState<any>([]);
   const [edges, setEdges, onEdgesChange] = useEdgesState<any>([]);
@@ -267,6 +270,7 @@ export const MindMapsPage: React.FC = () => {
           id: `edge-${parentId}-${newId}`,
           source: parentId,
           target: newId,
+          type: 'smoothstep',
           animated: true,
           style: { stroke: randomColor, strokeWidth: 1.5 },
         },
@@ -298,7 +302,7 @@ export const MindMapsPage: React.FC = () => {
 
   const onConnect = useCallback(
     (params: Connection) => {
-      setEdges((eds) => addEdge({ ...params, animated: true, style: { stroke: '#596A50', strokeWidth: 1.5 } }, eds));
+      setEdges((eds) => addEdge({ ...params, type: 'smoothstep', animated: true, style: { stroke: '#596A50', strokeWidth: 1.5 } }, eds));
       setSavedStatus('Unsaved changes');
     },
     [setEdges]
@@ -462,13 +466,33 @@ export const MindMapsPage: React.FC = () => {
           />
         </ReactFlow>
 
-        {/* Quick Instructions Overlay */}
-        <div className="absolute top-4 left-6 z-10 bg-white/90 backdrop-blur-xs border border-paper-300 rounded-lg p-2.5 shadow-xs text-[11px] text-charcoal-500 hidden md:block max-w-xs">
-          <p className="font-semibold text-charcoal-800 mb-0.5">Mind Map Gestures</p>
-          <p>• <strong>Double click</strong> any node to edit its text.</p>
-          <p>• Hover over a node and click <strong>+</strong> to sprout a connected child.</p>
-          <p>• Drag connecting dots to link or disconnect thoughts.</p>
-        </div>
+        {/* Quick Instructions Overlay (Dismissible/Toggleable) */}
+        {showTips ? (
+          <div className="absolute top-4 left-6 z-10 bg-white/95 backdrop-blur-md border border-paper-300 rounded-xl p-3 shadow-card text-[11px] text-charcoal-600 hidden md:block max-w-xs transition-all">
+            <div className="flex items-center justify-between mb-1.5 pb-1 border-b border-paper-200">
+              <span className="font-semibold text-charcoal-900">Mind Map Controls</span>
+              <button
+                onClick={() => setShowTips(false)}
+                className="text-charcoal-400 hover:text-charcoal-700 p-0.5 rounded hover:bg-paper-100"
+                title="Dismiss guide"
+              >
+                <X className="w-3.5 h-3.5" />
+              </button>
+            </div>
+            <p className="mb-1">• <strong>Double click</strong> any node to edit label text.</p>
+            <p className="mb-1">• Hover node and click <strong>+</strong> to sprout connected child.</p>
+            <p>• Drag handles between nodes to link concepts.</p>
+          </div>
+        ) : (
+          <button
+            onClick={() => setShowTips(true)}
+            className="absolute top-4 left-6 z-10 hidden md:flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-white/90 hover:bg-white border border-paper-300 text-charcoal-600 hover:text-charcoal-900 text-xs shadow-xs transition-colors"
+            title="Show canvas gestures guide"
+          >
+            <HelpCircle className="w-3.5 h-3.5 text-olive-600" />
+            <span>Gestures Guide</span>
+          </button>
+        )}
       </div>
     </div>
   );

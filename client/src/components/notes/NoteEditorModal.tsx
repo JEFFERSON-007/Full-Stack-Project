@@ -18,6 +18,7 @@ import {
 } from 'lucide-react';
 import { Note, Collection, NoteType } from '../../types';
 import { notesService } from '../../services/notes.service';
+import ReactMarkdown from 'react-markdown';
 
 interface NoteEditorModalProps {
   isOpen: boolean;
@@ -438,11 +439,69 @@ export const NoteEditorModal: React.FC<NoteEditorModalProps> = ({
                 }`}
               />
             ) : (
-              <div className="p-4 prose prose-sm max-w-none text-charcoal-800 min-h-[250px] overflow-y-auto">
+              <div className="p-5 max-w-none text-charcoal-800 min-h-[250px] max-h-[450px] overflow-y-auto space-y-3 bg-white">
                 {content ? (
-                  <pre className="whitespace-pre-wrap font-sans text-sm leading-relaxed">
+                  <ReactMarkdown
+                    components={{
+                      h1: ({ children }) => (
+                        <h1 className="text-xl font-editorial font-bold text-charcoal-900 border-b border-paper-200 pb-2 mb-3">
+                          {children}
+                        </h1>
+                      ),
+                      h2: ({ children }) => (
+                        <h2 className="text-base font-sans font-bold text-charcoal-900 mt-4 mb-2">
+                          {children}
+                        </h2>
+                      ),
+                      h3: ({ children }) => (
+                        <h3 className="text-sm font-sans font-semibold text-charcoal-800 mt-3 mb-1">
+                          {children}
+                        </h3>
+                      ),
+                      p: ({ children }) => (
+                        <p className="text-xs sm:text-sm text-charcoal-700 leading-relaxed mb-3">
+                          {children}
+                        </p>
+                      ),
+                      ul: ({ children }) => (
+                        <ul className="list-disc list-inside text-xs sm:text-sm text-charcoal-700 space-y-1 mb-3 pl-2">
+                          {children}
+                        </ul>
+                      ),
+                      ol: ({ children }) => (
+                        <ol className="list-decimal list-inside text-xs sm:text-sm text-charcoal-700 space-y-1 mb-3 pl-2">
+                          {children}
+                        </ol>
+                      ),
+                      li: ({ children }) => (
+                        <li className="leading-relaxed">{children}</li>
+                      ),
+                      blockquote: ({ children }) => (
+                        <blockquote className="border-l-4 border-olive-500 pl-3 py-1 my-3 text-xs italic text-charcoal-600 bg-olive-50/40 rounded-r">
+                          {children}
+                        </blockquote>
+                      ),
+                      code: ({ className, children, ...props }) => {
+                        const match = /language-(\w+)/.exec(className || '');
+                        return match ? (
+                          <pre className="bg-charcoal-900 text-paper-100 p-3.5 rounded-lg text-xs font-mono overflow-x-auto my-3">
+                            <code className={className} {...props}>
+                              {children}
+                            </code>
+                          </pre>
+                        ) : (
+                          <code className="bg-paper-200 text-charcoal-800 px-1.5 py-0.5 rounded text-[11px] font-mono" {...props}>
+                            {children}
+                          </code>
+                        );
+                      },
+                      strong: ({ children }) => (
+                        <strong className="font-semibold text-charcoal-900">{children}</strong>
+                      ),
+                    }}
+                  >
                     {content}
-                  </pre>
+                  </ReactMarkdown>
                 ) : (
                   <p className="text-charcoal-400 italic text-sm">No content to preview.</p>
                 )}
