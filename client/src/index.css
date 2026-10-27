@@ -1,0 +1,74 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --bg-paper: #F7F6F2;
+    --sidebar-paper: #EFEEE8;
+    --text-charcoal: #252720;
+    --border-warm: #E2DFD7;
+    --accent-olive: #596A50;
+    --accent-terracotta: #BF765C;
+  }
+
+  body {
+    background-color: #F7F6F2;
+    color: #252720;
+    font-family: 'DM Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  }
+
+  h1, h2, h3, .font-editorial {
+    font-family: 'Instrument Serif', Georgia, Cambria, serif;
+  }
+}
+
+/* Custom Scrollbar for a refined editorial feel */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #D5D2C8;
+  border-radius: 9999px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #A49F90;
+}
+
+/* React Flow styling overrides for Folio warm aesthetic */
+.react-flow__background {
+  background-color: #F7F6F2 !important;
+}
+
+.react-flow__controls {
+  box-shadow: 0 4px 12px rgba(37, 39, 32, 0.08) !important;
+  border-radius: 8px !important;
+  overflow: hidden !important;
+  border: 1px solid #E2DFD7 !important;
+  background-color: #FFFFFF !important;
+}
+
+.react-flow__controls-button {
+  border-bottom: 1px solid #E2DFD7 !important;
+  background-color: #FFFFFF !important;
+  color: #52544B !important;
+}
+
+.react-flow__controls-button:hover {
+  background-color: #EFEEE8 !important;
+  color: #252720 !important;
+}
+
+.react-flow__minimap {
+  border-radius: 8px !important;
+  border: 1px solid #E2DFD7 !important;
+  overflow: hidden !important;
+  background-color: #FAF9F6 !important;
+}

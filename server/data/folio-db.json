@@ -1,0 +1,383 @@
+{
+  "users": [
+    {
+      "_id": "f9e79fdbcc0a8be6a5fc12b5",
+      "name": "Alex Chen",
+      "email": "alex.chen@folio.workspace",
+      "password": "$2a$10$3H/c43GgELKij9DqmZDtoeLdfhpbDwquNx8.jqDH7io4xdH9UqbUu",
+      "avatar": "https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=250&q=80",
+      "preferences": {
+        "theme": "warm",
+        "defaultView": "grid"
+      },
+      "createdAt": "2026-10-27T16:37:33.971Z",
+      "updatedAt": "2026-10-27T16:37:33.971Z"
+    }
+  ],
+  "notes": [
+    {
+      "_id": "8b07cc075c97262fbf13157b",
+      "user": "f9e79fdbcc0a8be6a5fc12b5",
+      "title": "JavaScript Event Loop & Microtask Concurrency",
+      "content": "# JavaScript Event Loop & Microtask Queue\n\nJavaScript runs on a single-threaded event loop, yet handles high-throughput asynchronous I/O via the call stack, Web APIs, and two primary task queues:\n\n1. **Call Stack**: Synchronous execution frames.\n2. **Microtask Queue**: Promises (`.then`, `.catch`, `await`), `queueMicrotask()`, and `MutationObserver`. Microtasks have priority and run *immediately* after the current script executes, draining completely before the next macrotask.\n3. **Macrotask Queue**: `setTimeout`, `setInterval`, `setImmediate`, and DOM events.\n\n### Execution Example\nWhen an async function awaits a Promise, the engine yields control and registers the resumption as a microtask:\n\n```javascript\nconsole.log('1: Sync script start');\n\nsetTimeout(() => {\n  console.log('4: Macrotask timer executed');\n}, 0);\n\nPromise.resolve().then(() => {\n  console.log('2: Microtask 1 resolved');\n}).then(() => {\n  console.log('3: Microtask 2 chained');\n});\n\nconsole.log('Sync script end');\n```\n\n**Key Takeaway**: Heavy tasks inside microtasks can starve the event loop and freeze UI rendering. Always batch intensive calculations using `requestAnimationFrame` or web workers.",
+      "type": "code",
+      "codeLanguage": "javascript",
+      "tags": [
+        "javascript",
+        "concurrency",
+        "v8",
+        "event-loop",
+        "performance"
+      ],
+      "collectionId": "cf107422193d83cd9c0b87a6",
+      "isFavorite": true,
+      "isPinned": true,
+      "relatedNotes": [
+        "a839132ba9b6fb63a27191cd",
+        "8f500609714be6eba937e977"
+      ],
+      "createdAt": "2026-10-27T16:37:33.979Z",
+      "updatedAt": "2026-10-27T16:37:33.984Z"
+    },
+    {
+      "_id": "a839132ba9b6fb63a27191cd",
+      "user": "f9e79fdbcc0a8be6a5fc12b5",
+      "title": "Data Structures: Hash Tables & Collision Resolution",
+      "content": "# Hash Tables & Amortized O(1) Lookups\n\nHash tables map arbitrary keys to fixed integer indices via hash functions. When two keys produce the same bucket index, collision resolution determines performance:\n\n### Resolution Strategies\n- **Separate Chaining**: Each bucket points to a linked list (or balanced red-black tree when chain length > 8, as in Java's HashMap). Worst case lookup: O(log N).\n- **Open Addressing (Linear/Quadratic Probing)**: If bucket is occupied, probe step `k` spaces forward. Sensitive to clustering and load factor (`α = n/k`).\n- **Robin Hood Hashing**: Balances search variance by stealing from the rich (short probe distance) and giving to the poor.\n\n### Complexity Matrix\n| Operation | Average | Worst Case |\n|---|---|---|\n| Search | O(1) | O(N) |\n| Insert | O(1) | O(N) |\n| Delete | O(1) | O(N) |\n\nSpace complexity is O(N) where table resizes typically at load factor `α > 0.75`.",
+      "type": "text",
+      "tags": [
+        "algorithms",
+        "data-structures",
+        "hash-table",
+        "cs-core"
+      ],
+      "collectionId": "13ee8be6801645c42a3f0718",
+      "isFavorite": true,
+      "isPinned": false,
+      "relatedNotes": [
+        "8b07cc075c97262fbf13157b",
+        "0a48fc9234fa9097f9800a8f"
+      ],
+      "createdAt": "2026-10-27T16:37:33.980Z",
+      "updatedAt": "2026-10-27T16:37:33.986Z"
+    },
+    {
+      "_id": "0a48fc9234fa9097f9800a8f",
+      "user": "f9e79fdbcc0a8be6a5fc12b5",
+      "title": "AWS Data Engineering: Serverless Streaming Architecture",
+      "content": "# Serverless Streaming Data Pipeline on AWS\n\nDesigning real-time event ingestion for IoT telemetry and user clickstream without managing EC2 instances.\n\n### Architectural Blueprint\n```\n[Data Producers] \n       │ (JSON Payloads via HTTPS)\n       ▼\n[Amazon Kinesis Data Streams] \n       │ (Sharded Partition Keys)\n       ▼\n[AWS Lambda Consumers] ────► [Amazon DynamoDB] (Hot Store O(1) queries)\n       │\n       ▼\n[Amazon Kinesis Data Firehose] \n       │ (Buffered Parquet format conversion)\n       ▼\n[Amazon S3 Data Lake] ────► [AWS Glue Catalog] ────► [Amazon Athena (SQL)]\n```\n\n### Design Considerations\n- **Partition Key Selection**: Ensure high cardinality (e.g., `deviceId_timestamp`) to prevent hot shards.\n- **Backpressure & Dead-Letter Queues (DLQ)**: Configure SQS DLQ on Lambda triggers to safely isolate corrupted messages.\n- **Cost Optimization**: Firehose automatic gzip compression reduces S3 storage costs by ~75%.",
+      "type": "research",
+      "tags": [
+        "aws",
+        "data-engineering",
+        "kinesis",
+        "serverless",
+        "system-design"
+      ],
+      "collectionId": "fb4b58e16473e4d13b903d6c",
+      "isFavorite": true,
+      "isPinned": true,
+      "relatedNotes": [
+        "a839132ba9b6fb63a27191cd",
+        "8f500609714be6eba937e977"
+      ],
+      "createdAt": "2026-10-27T16:37:33.980Z",
+      "updatedAt": "2026-10-27T16:37:33.987Z"
+    },
+    {
+      "_id": "3b2583876294719cd18307bb",
+      "user": "f9e79fdbcc0a8be6a5fc12b5",
+      "title": "Machine Learning: Transformer Attention & Self-Attention",
+      "content": "# The Transformer Architecture: Attention Is All You Need\n\nTraditional RNNs process tokens sequentially, creating bottleneck gradients and preventing parallelization across long contexts. Transformers solve this with **Scaled Dot-Product Attention**:\n\n### Mathematical Formulation\n$$\\text{Attention}(Q, K, V) = \\text{softmax}\\left(\\frac{QK^T}{\\sqrt{d_k}}\\right)V$$\n\n- **Queries ($Q$)**: What the current token is seeking.\n- **Keys ($K$)**: What other tokens offer.\n- **Values ($V$)**: The actual information payload.\n- **Scaling Factor $\\sqrt{d_k}$**: Prevents the dot product from growing too large in high dimensions, which would cause vanishing gradients in the softmax.\n\n### Multi-Head Attention\nInstead of performing a single attention function, Multi-Head Attention projects $Q, K, V$ into $h$ distinct representation subspaces, enabling the model to jointly attend to semantic syntax, coreference, and positional relationships.",
+      "type": "research",
+      "tags": [
+        "machine-learning",
+        "transformers",
+        "ai",
+        "deep-learning",
+        "math"
+      ],
+      "collectionId": "125e5300662adbf31b0ea9dd",
+      "isFavorite": false,
+      "isPinned": false,
+      "relatedNotes": [
+        "a839132ba9b6fb63a27191cd",
+        "0a48fc9234fa9097f9800a8f"
+      ],
+      "createdAt": "2026-10-27T16:37:33.981Z",
+      "updatedAt": "2026-10-27T16:37:33.987Z"
+    },
+    {
+      "_id": "8f500609714be6eba937e977",
+      "user": "f9e79fdbcc0a8be6a5fc12b5",
+      "title": "Full Stack Project: Offline-First Local-First Knowledge Engine",
+      "content": "# Project Spec: Local-First CRDT Knowledge Workspace\n\nA study on building high-performance offline-first web applications using Conflict-free Replicated Data Types (CRDTs).\n\n### Core Pillars\n1. **Zero-Latency Interactions**: All mutations apply immediately to IndexedDB via local state.\n2. **Peer-to-Peer Sync**: Optional WebRTC synchronization with central fallback via WebSocket.\n3. **Graph Traversal**: Notes form a directed acyclic graph (DAG) traversed via bidirectional links.\n\n### Tech Stack\n- Frontend: React + TypeScript + Canvas\n- CRDT Engine: Yjs or Automerge\n- Vector Indexing: Local client-side embeddings via Transformers.js in Web Workers.\n- Storage: OPFS (Origin Private File System) and SQLite WASM.",
+      "type": "text",
+      "tags": [
+        "full-stack",
+        "project-ideas",
+        "crdt",
+        "local-first",
+        "architecture"
+      ],
+      "collectionId": "7f0cdae4a49141e9e721444e",
+      "isFavorite": false,
+      "isPinned": false,
+      "relatedNotes": [
+        "8b07cc075c97262fbf13157b",
+        "0a48fc9234fa9097f9800a8f",
+        "3c3783a5c440cad8ad96bca1"
+      ],
+      "createdAt": "2026-10-27T16:37:33.982Z",
+      "updatedAt": "2026-10-27T16:37:33.988Z"
+    },
+    {
+      "_id": "3c3783a5c440cad8ad96bca1",
+      "user": "f9e79fdbcc0a8be6a5fc12b5",
+      "title": "Refined Typography & Micro-Interactions Reference",
+      "content": "# Digital Editorial Typography & Design Principles\n\nA curated compilation of web interface guidelines, color theory, and typographic hierarchy for software craftsmen:\n\n- **Type Scale Ratio**: Major Second (1.125) or Minor Third (1.2) prevents jarring transitions between headings and body text.\n- **Line Length (Measure)**: 55 to 75 characters per line ensures effortless optical tracking across paragraphs.\n- **Color Harmony**: Monochromatic neutral backgrounds (warm stone/ivory) with muted organic accents (forest olive, terracotta) reduce visual fatigue.\n\nResource: https://practicaltypography.com/",
+      "type": "link",
+      "sourceUrl": "https://practicaltypography.com/",
+      "tags": [
+        "design",
+        "typography",
+        "ux",
+        "css",
+        "design-system"
+      ],
+      "collectionId": "cf107422193d83cd9c0b87a6",
+      "isFavorite": true,
+      "isPinned": false,
+      "relatedNotes": [
+        "8b07cc075c97262fbf13157b",
+        "8f500609714be6eba937e977"
+      ],
+      "createdAt": "2026-10-27T16:37:33.983Z",
+      "updatedAt": "2026-10-27T16:37:33.989Z"
+    },
+    {
+      "_id": "21b10797cf6d5d4ff6c9dde4",
+      "user": "f9e79fdbcc0a8be6a5fc12b5",
+      "title": "Test Quick Idea: Microservices CQRS",
+      "content": "",
+      "type": "text",
+      "tags": [],
+      "collectionId": null,
+      "isFavorite": false,
+      "isPinned": false,
+      "codeLanguage": "javascript",
+      "sourceUrl": "",
+      "relatedNotes": [],
+      "createdAt": "2026-10-27T16:57:09.026Z",
+      "updatedAt": "2026-10-27T16:57:09.026Z"
+    }
+  ],
+  "collections": [
+    {
+      "_id": "13ee8be6801645c42a3f0718",
+      "user": "f9e79fdbcc0a8be6a5fc12b5",
+      "name": "Computer Science Core",
+      "description": "Algorithms, data structures, and computer science foundations.",
+      "color": "#596A50",
+      "icon": "binary",
+      "createdAt": "2026-10-27T16:37:33.976Z",
+      "updatedAt": "2026-10-27T16:37:33.976Z"
+    },
+    {
+      "_id": "fb4b58e16473e4d13b903d6c",
+      "user": "f9e79fdbcc0a8be6a5fc12b5",
+      "name": "System Architecture",
+      "description": "Cloud design, microservices, distributed systems, and AWS pipelines.",
+      "color": "#BF765C",
+      "icon": "cpu",
+      "createdAt": "2026-10-27T16:37:33.976Z",
+      "updatedAt": "2026-10-27T16:37:33.976Z"
+    },
+    {
+      "_id": "cf107422193d83cd9c0b87a6",
+      "user": "f9e79fdbcc0a8be6a5fc12b5",
+      "name": "Modern Web Engineering",
+      "description": "React, TypeScript, state management, and modern browser APIs.",
+      "color": "#D99B26",
+      "icon": "globe",
+      "createdAt": "2026-10-27T16:37:33.977Z",
+      "updatedAt": "2026-10-27T16:37:33.977Z"
+    },
+    {
+      "_id": "125e5300662adbf31b0ea9dd",
+      "user": "f9e79fdbcc0a8be6a5fc12b5",
+      "name": "Machine Learning & AI",
+      "description": "Neural networks, embeddings, transformers, and model evaluation.",
+      "color": "#4E7271",
+      "icon": "sparkles",
+      "createdAt": "2026-10-27T16:37:33.978Z",
+      "updatedAt": "2026-10-27T16:37:33.978Z"
+    },
+    {
+      "_id": "7f0cdae4a49141e9e721444e",
+      "user": "f9e79fdbcc0a8be6a5fc12b5",
+      "name": "Project Ideas & Research",
+      "description": "Architectural spikes, full-stack blueprints, and product experiments.",
+      "color": "#6E6D66",
+      "icon": "lightbulb",
+      "createdAt": "2026-10-27T16:37:33.978Z",
+      "updatedAt": "2026-10-27T16:37:33.978Z"
+    }
+  ],
+  "noterevisions": [
+    {
+      "_id": "d6cbfe3f9c494782e056f1c5",
+      "noteId": "8b07cc075c97262fbf13157b",
+      "user": "f9e79fdbcc0a8be6a5fc12b5",
+      "title": "JavaScript Event Loop Basics",
+      "content": "Initial notes on single-threaded execution and call stacks.",
+      "type": "text",
+      "tags": [
+        "javascript",
+        "basics"
+      ],
+      "changeSummary": "Initial draft before adding microtasks",
+      "createdAt": "2026-10-24T16:37:33.990Z",
+      "updatedAt": "2026-10-27T16:37:33.990Z"
+    },
+    {
+      "_id": "34ab63c0ec787d9133d40e4c",
+      "noteId": "8b07cc075c97262fbf13157b",
+      "user": "f9e79fdbcc0a8be6a5fc12b5",
+      "title": "JavaScript Event Loop & Microtask Concurrency",
+      "content": "# JavaScript Event Loop & Microtask Queue\n\nJavaScript runs on a single-threaded event loop, yet handles high-throughput asynchronous I/O via the call stack, Web APIs, and two primary task queues:\n\n1. **Call Stack**: Synchronous execution frames.\n2. **Microtask Queue**: Promises (`.then`, `.catch`, `await`), `queueMicrotask()`, and `MutationObserver`. Microtasks have priority and run *immediately* after the current script executes, draining completely before the next macrotask.\n3. **Macrotask Queue**: `setTimeout`, `setInterval`, `setImmediate`, and DOM events.\n\n### Execution Example\nWhen an async function awaits a Promise, the engine yields control and registers the resumption as a microtask:\n\n```javascript\nconsole.log('1: Sync script start');\n\nsetTimeout(() => {\n  console.log('4: Macrotask timer executed');\n}, 0);\n\nPromise.resolve().then(() => {\n  console.log('2: Microtask 1 resolved');\n}).then(() => {\n  console.log('3: Microtask 2 chained');\n});\n\nconsole.log('Sync script end');\n```\n\n**Key Takeaway**: Heavy tasks inside microtasks can starve the event loop and freeze UI rendering. Always batch intensive calculations using `requestAnimationFrame` or web workers.",
+      "type": "code",
+      "tags": [
+        "javascript",
+        "concurrency",
+        "v8",
+        "event-loop",
+        "performance"
+      ],
+      "changeSummary": "Added code demonstration and performance considerations",
+      "createdAt": "2026-10-26T16:37:33.992Z",
+      "updatedAt": "2026-10-27T16:37:33.992Z"
+    },
+    {
+      "_id": "a26a67abd50f54c030a89fb8",
+      "noteId": "21b10797cf6d5d4ff6c9dde4",
+      "user": "f9e79fdbcc0a8be6a5fc12b5",
+      "title": "Test Quick Idea: Microservices CQRS",
+      "content": "",
+      "type": "text",
+      "tags": [],
+      "changeSummary": "Created initial note",
+      "createdAt": "2026-10-27T16:57:09.058Z",
+      "updatedAt": "2026-10-27T16:57:09.058Z"
+    }
+  ],
+  "mindmaps": [
+    {
+      "_id": "2f182d3bfd7628651d1e1625",
+      "user": "f9e79fdbcc0a8be6a5fc12b5",
+      "name": "Full Stack Engineering Architecture Roadmap",
+      "description": "Master breakdown of computer science, distributed cloud systems, and modern frontend design.",
+      "nodes": [
+        {
+          "id": "node-root",
+          "type": "mindMapNode",
+          "position": {
+            "x": 400,
+            "y": 250
+          },
+          "data": {
+            "label": "Full Stack Engineering",
+            "isRoot": true,
+            "color": "#596A50",
+            "noteId": "8f500609714be6eba937e977",
+            "noteTitle": "Full Stack Project: Offline-First Local-First Knowledge Engine"
+          }
+        },
+        {
+          "id": "node-cs",
+          "type": "mindMapNode",
+          "position": {
+            "x": 120,
+            "y": 100
+          },
+          "data": {
+            "label": "CS Core & Algorithms",
+            "color": "#596A50",
+            "noteId": "a839132ba9b6fb63a27191cd",
+            "noteTitle": "Data Structures: Hash Tables & Collision Resolution"
+          }
+        },
+        {
+          "id": "node-web",
+          "type": "mindMapNode",
+          "position": {
+            "x": 120,
+            "y": 380
+          },
+          "data": {
+            "label": "Modern Web & V8 Engine",
+            "color": "#D99B26",
+            "noteId": "8b07cc075c97262fbf13157b",
+            "noteTitle": "JavaScript Event Loop & Microtask Concurrency"
+          }
+        },
+        {
+          "id": "node-cloud",
+          "type": "mindMapNode",
+          "position": {
+            "x": 680,
+            "y": 100
+          },
+          "data": {
+            "label": "Cloud & Distributed Streaming",
+            "color": "#BF765C",
+            "noteId": "0a48fc9234fa9097f9800a8f",
+            "noteTitle": "AWS Data Engineering: Serverless Streaming Architecture"
+          }
+        },
+        {
+          "id": "node-ai",
+          "type": "mindMapNode",
+          "position": {
+            "x": 680,
+            "y": 380
+          },
+          "data": {
+            "label": "Machine Learning & Embeddings",
+            "color": "#4E7271",
+            "noteId": "3b2583876294719cd18307bb",
+            "noteTitle": "Machine Learning: Transformer Attention & Self-Attention"
+          }
+        }
+      ],
+      "edges": [
+        {
+          "id": "edge-root-cs",
+          "source": "node-root",
+          "target": "node-cs",
+          "animated": true
+        },
+        {
+          "id": "edge-root-web",
+          "source": "node-root",
+          "target": "node-web",
+          "animated": true
+        },
+        {
+          "id": "edge-root-cloud",
+          "source": "node-root",
+          "target": "node-cloud",
+          "animated": true
+        },
+        {
+          "id": "edge-root-ai",
+          "source": "node-root",
+          "target": "node-ai",
+          "animated": true
+        }
+      ],
+      "createdAt": "2026-10-27T16:37:33.993Z",
+      "updatedAt": "2026-10-27T16:37:33.993Z"
+    }
+  ]
+}
