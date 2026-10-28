@@ -19,7 +19,8 @@ const connectDB = async () => {
 
   // Mask credentials for secure logging
   const maskedUri = uri.replace(/\/\/([^:]+):([^@]+)@/, '//$1:****@');
-  console.log(`[Folio DB] Connecting to MongoDB Atlas at: ${maskedUri}`);
+  const isAtlas = uri.includes('mongodb+srv') || uri.includes('cluster');
+  console.log(`[Folio DB] Connecting to ${isAtlas ? 'MongoDB Atlas' : 'MongoDB (Local / Compass)'} at: ${maskedUri}`);
 
   mongoose.set('strictQuery', false);
 
@@ -30,14 +31,14 @@ const connectDB = async () => {
     });
 
     isConnected = true;
-    console.log(`✨ [Folio DB] Successfully connected to MongoDB Atlas.`);
+    console.log(`✨ [Folio DB] Successfully connected to ${isAtlas ? 'MongoDB Atlas' : 'MongoDB (Local / Compass)'}.`);
     console.log(`   Host: ${conn.connection.host}`);
     console.log(`   Database Name: ${conn.connection.name}`);
     console.log(`   Ready State: Connected (1)`);
     return conn;
   } catch (err) {
     isConnected = false;
-    console.error(`❌ [Folio DB] MongoDB Atlas connection failed.`);
+    console.error(`❌ [Folio DB] MongoDB connection failed.`);
     console.error(`   Error: ${err.message}`);
 
     if (err.message.includes('whitelist') || err.message.includes('Could not connect to any servers')) {
@@ -50,13 +51,17 @@ const connectDB = async () => {
   }
 };
 
-const getDBMode = () => ({
-  isConnected,
-  useEmbeddedFallback: false,
-  type: isConnected ? 'mongodb-atlas' : 'disconnected',
-  host: mongoose.connection?.host || null,
-  name: mongoose.connection?.name || null
-});
+const getDBMode = () => {
+  const uri = process.env.MONGODB_URI || '';
+  const isAtlas = uri.includes('mongodb+srv') || uri.includes('cluster');
+  return {
+    isConnected,
+    useEmbeddedFallback: false,
+    type: isConnected ? (isAtlas ? 'mongodb-atlas' : 'mongodb-local') : 'disconnected',
+    host: mongoose.connection?.host || null,
+    name: mongoose.connection?.name || null
+  };
+};
 
 module.exports = {
   connectDB,

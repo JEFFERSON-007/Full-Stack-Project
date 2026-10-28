@@ -30,7 +30,23 @@ const userSchema = new mongoose.Schema({
     defaultView: { type: String, enum: ['grid', 'list'], default: 'grid' }
   }
 }, {
-  timestamps: true
+  timestamps: true,
+  toJSON: {
+    virtuals: true,
+    transform: (doc, ret) => {
+      ret.id = (ret._id || ret.id)?.toString();
+      delete ret.password;
+      return ret;
+    }
+  },
+  toObject: {
+    virtuals: true,
+    transform: (doc, ret) => {
+      ret.id = (ret._id || ret.id)?.toString();
+      delete ret.password;
+      return ret;
+    }
+  }
 });
 
 let MongooseUserModel;

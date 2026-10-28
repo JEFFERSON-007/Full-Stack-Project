@@ -30,9 +30,11 @@ const authMiddleware = async (req, res, next) => {
       });
     }
 
-    // Attach user (without password)
-    const { password, ...userWithoutPassword } = user;
-    req.user = userWithoutPassword;
+    // Attach user (without password) safely handling Mongoose Documents
+    const userObj = user.toObject ? user.toObject() : { ...user };
+    delete userObj.password;
+    userObj.id = (userObj._id || userObj.id).toString();
+    req.user = userObj;
     next();
   } catch (error) {
     return res.status(401).json({

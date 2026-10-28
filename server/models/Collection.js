@@ -27,7 +27,23 @@ const collectionSchema = new mongoose.Schema({
     default: 'folder'
   }
 }, {
-  timestamps: true
+  timestamps: true,
+  toJSON: {
+    virtuals: true,
+    transform: (doc, ret) => {
+      ret.id = (ret._id || ret.id)?.toString();
+      if (ret.user) ret.user = ret.user?.toString();
+      return ret;
+    }
+  },
+  toObject: {
+    virtuals: true,
+    transform: (doc, ret) => {
+      ret.id = (ret._id || ret.id)?.toString();
+      if (ret.user) ret.user = ret.user?.toString();
+      return ret;
+    }
+  }
 });
 
 let MongooseCollectionModel;

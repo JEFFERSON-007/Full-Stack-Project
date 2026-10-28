@@ -1,8 +1,8 @@
-require('dotenv').config();
+const path = require('path');
+require('dotenv').config({ path: path.join(__dirname, '.env') });
 const express = require('express');
 const cors = require('cors');
 const morgan = require('morgan');
-const path = require('path');
 const { connectDB, getDBMode } = require('./config/db');
 
 // Route imports
@@ -59,7 +59,7 @@ app.use((err, req, res, next) => {
 // Start Server strictly after database connection
 const startServer = async () => {
   try {
-    // 1. Establish connection to MongoDB Atlas first
+    // 1. Establish connection to MongoDB first
     await connectDB();
 
     // 2. Start Express listener only after successful database connection
@@ -71,9 +71,9 @@ const startServer = async () => {
       console.log(`======================================================\n`);
     });
   } catch (err) {
-    console.error(`\n🛑 Server startup aborted: Failed to establish MongoDB Atlas connection.`);
+    console.error(`\n🛑 Server startup aborted: Failed to establish MongoDB connection.`);
     console.error(`   Error details: ${err.message}`);
-    console.error(`   Please check your network access and MongoDB Atlas IP whitelist.\n`);
+    console.error(`   Please ensure local MongoDB Community Server is running on port 27017 or verify server/.env.\n`);
     process.exit(1);
   }
 };

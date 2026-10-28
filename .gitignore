@@ -9,3 +9,5 @@ client/.env.local
 *.log
 .DS_Store
 server/data/
+powershell.cmd
+server/powershell.cmd

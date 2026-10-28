@@ -53,7 +53,31 @@ const noteSchema = new mongoose.Schema({
     ref: 'Note'
   }]
 }, {
-  timestamps: true
+  timestamps: true,
+  toJSON: {
+    virtuals: true,
+    transform: (doc, ret) => {
+      ret.id = (ret._id || ret.id)?.toString();
+      if (ret.user) ret.user = ret.user?.toString();
+      if (ret.collectionId) ret.collectionId = ret.collectionId?.toString();
+      if (Array.isArray(ret.relatedNotes)) {
+        ret.relatedNotes = ret.relatedNotes.map(rn => (rn && rn.toString) ? rn.toString() : rn);
+      }
+      return ret;
+    }
+  },
+  toObject: {
+    virtuals: true,
+    transform: (doc, ret) => {
+      ret.id = (ret._id || ret.id)?.toString();
+      if (ret.user) ret.user = ret.user?.toString();
+      if (ret.collectionId) ret.collectionId = ret.collectionId?.toString();
+      if (Array.isArray(ret.relatedNotes)) {
+        ret.relatedNotes = ret.relatedNotes.map(rn => (rn && rn.toString) ? rn.toString() : rn);
+      }
+      return ret;
+    }
+  }
 });
 
 // Indexes for fast searching and filtering

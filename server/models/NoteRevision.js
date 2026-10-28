@@ -33,7 +33,25 @@ const noteRevisionSchema = new mongoose.Schema({
     default: 'Snapshot before update'
   }
 }, {
-  timestamps: { createdAt: true, updatedAt: false }
+  timestamps: { createdAt: true, updatedAt: false },
+  toJSON: {
+    virtuals: true,
+    transform: (doc, ret) => {
+      ret.id = (ret._id || ret.id)?.toString();
+      if (ret.user) ret.user = ret.user?.toString();
+      if (ret.noteId) ret.noteId = ret.noteId?.toString();
+      return ret;
+    }
+  },
+  toObject: {
+    virtuals: true,
+    transform: (doc, ret) => {
+      ret.id = (ret._id || ret.id)?.toString();
+      if (ret.user) ret.user = ret.user?.toString();
+      if (ret.noteId) ret.noteId = ret.noteId?.toString();
+      return ret;
+    }
+  }
 });
 
 noteRevisionSchema.index({ noteId: 1, createdAt: -1 });
