@@ -1,46 +1,43 @@
 # Folio — Personal Knowledge Workspace & Smart Search
 
-A full-stack, personal knowledge management platform with an art-directed editorial design language, interactive knowledge graph, persistent mind maps, and search capabilities.
+A modern, production-grade personal knowledge management platform with an art-directed editorial design language, interactive knowledge graph, persistent mind maps, and instant search capabilities.
 
 Built for students, software engineers, and researchers to capture, organize, cross-link, and visually explore their ideas.
 
 ---
 
-## 🌿 Highlights & Key Differentiators
+## 🌿 Highlights & Key Capabilities
 
 - **Editorial Design System**: Warm ivory (`#F7F6F2`), deep charcoal (`#252720`), restrained olive (`#596A50`) and terracotta (`#BF765C`) accents. Features typography pairing *Instrument Serif*, *DM Sans*, and *JetBrains Mono*.
 - **Multi-Modality Note Cards**: Full support for Study Notes, Code Snippets (with syntax styling), Web Links (with metadata), and Research Notes.
 - **Smart Search & Command Palette (`Ctrl/Cmd + K`)**: Instant search across titles, content, tags, collections, and URLs with keyboard navigation and filter pills.
-- **Interactive Knowledge Graph**: React Flow powered visualization mapping explicit links and shared semantic tags into a navigable graph with slide-over inspection drawers.
+- **Interactive Knowledge Graph**: React Flow (`@xyflow/react`) powered visualization mapping explicit links and shared semantic tags into a navigable graph with slide-over inspection drawers.
 - **Persistent Mind Map Studio**: Visual idea-mapping canvas where nodes can be connected, colored, edited inline, and linked directly to existing knowledge base notes.
 - **Deep Analytics & Insights**: Responsive charts tracking capture velocity over time (7d, 30d, 90d), note type distribution, collection balance, and dominant tags.
-- **Version Revision History**: Snapshot preservation on note updates with instant one-click rollback.
-- **Dual-Mode Database Engine**: Connects natively to MongoDB via Mongoose. If MongoDB is not installed locally, it seamlessly switches to the zero-config embedded storage engine (`server/data/folio-db.json`) ensuring immediate demonstration without dependencies.
+- **Version Revision History**: Snapshot preservation on note updates with instant one-click rollback and version comparison.
+- **Real Database Integration**: Connected to local MongoDB Community Server via Mongoose with strict startup verification, ObjectId-to-virtual-id transformation, and full CRUD operations.
 
 ---
 
 ## 🛠️ Technology Stack
 
-### Frontend
-- **Framework**: React 18 with TypeScript & Vite
-- **Styling**: Tailwind CSS tailored with custom Folio design tokens
-- **Graph & Mind Maps**: React Flow (`@xyflow/react`)
-- **Visual Analytics**: Recharts
-- **Iconography**: Lucide React
-- **Routing**: React Router DOM v6
-- **Markdown / Code**: Custom formatted code blocks and markdown preview
-
-### Backend
-- **Runtime**: Node.js & Express
-- **Authentication**: JWT & bcryptjs password hashing
-- **Database**: Mongoose (MongoDB) with embedded zero-config fallback
-- **Logging & Security**: Morgan, CORS, input validation, strict user data isolation
+| Layer | Technologies |
+| :--- | :--- |
+| **Frontend Framework** | React 18, TypeScript, Vite |
+| **Styling & UI** | Tailwind CSS (custom design tokens), Lucide React |
+| **Knowledge Graph** | React Flow (`@xyflow/react`) |
+| **Visual Analytics** | Recharts (area, bar, and donut charts) |
+| **Routing & Auth** | React Router DOM v6, JWT context authentication |
+| **Backend Runtime** | Node.js, Express.js |
+| **Database & ODM** | MongoDB Community Server (v9.0+), Mongoose ODM |
+| **Security & Auth** | JWT (`jsonwebtoken`), bcrypt password hashing, CORS |
+| **Diagnostics & Tools** | Morgan HTTP logging, standalone E2E & DB test scripts |
 
 ---
 
 ## 📂 Project Organization
 
-```
+```text
 Full-Stack Project/
 ├── client/                     # React + TypeScript + Vite Frontend
 │   ├── src/
@@ -49,69 +46,55 @@ Full-Stack Project/
 │   │   │   ├── notes/          # NoteCard, NoteEditorModal, RevisionHistoryModal
 │   │   │   ├── collections/    # CollectionModal
 │   │   │   └── search/         # CommandPalette (Ctrl+K)
-│   │   ├── pages/              # Dashboard, AllNotes, Collections, Graph, MindMaps, Analytics, etc.
-│   │   ├── services/           # API clients for notes, collections, mindmaps, analytics
+│   │   ├── pages/              # Dashboard, AllNotes, Collections, Graph, MindMaps, Analytics, Settings
+│   │   ├── services/           # Axios/Fetch API clients for notes, collections, mindmaps, analytics
 │   │   ├── context/            # AuthContext (JWT session management)
 │   │   └── types/              # TypeScript interface definitions
 │   └── package.json
 ├── server/                     # Node.js + Express Backend
-│   ├── config/                 # Database connection & dual-mode driver
-│   ├── models/                 # User, Note, Collection, NoteRevision, MindMap
-│   ├── routes/                 # Express REST endpoints
+│   ├── config/                 # Mongoose connection & DNS resolution
+│   ├── models/                 # User, Note, Collection, NoteRevision, MindMap schemas
+│   ├── routes/                 # Express REST endpoints (auth, notes, collections, mindmaps, analytics)
 │   ├── middleware/             # JWT auth middleware & data ownership checks
-│   ├── data/                   # Embedded fallback database storage
 │   ├── seed.js                 # Realistic seed script for demonstration
-│   └── server.js               # Express application entry
+│   ├── test-db-connection.js   # Local MongoDB connection diagnostic test
+│   ├── test-api-e2e.js         # End-to-end API integration test
+│   ├── server.js               # Express application entry (database-gated startup)
+│   ├── .env                    # Environment variables (ignored by git)
+│   └── .env.example            # Environment template
 ├── package.json                # Root package.json (concurrent orchestration)
 └── README.md
 ```
 
 ---
 
-## 🚀 Quick Start Guide
+## 🚀 Quick Start & Starting Commands
 
 ### Prerequisites
-- **Node.js**: v18.0.0 or higher
-- **npm**: v9.0.0 or higher
-- *(Optional)* **MongoDB**: Local MongoDB or MongoDB Atlas URI (not required; embedded engine activates automatically if MongoDB is absent).
-
-### Step 1: Install Dependencies
-From the repository root:
-```bash
-npm run install:all
-```
-*Or install client and server individually:*
-```bash
-cd server && npm install
-cd ../client && npm install
-```
-
-### Step 2: Seed the Knowledge Base
-Populate the database with realistic notes, linked knowledge graph edges, collections, and a sample mind map:
-```bash
-npm run seed
-```
-
-This creates the default demo account:
-- **Email**: `alex.chen@folio.workspace`
-- **Password**: `folio2026`
-*(You can also use the **1-Click Demo Sign In** button directly on the login screen).*
-
-### Step 3: Start the Application
-Run both backend API and frontend Vite dev server concurrently:
-```bash
-npm start
-```
-- Frontend will open at: **http://localhost:5173**
-- Backend API will run at: **http://localhost:5000**
-- Health Check available at: **http://localhost:5000/api/health**
+1. **Node.js**: v18.0.0 or higher
+2. **npm**: v9.0.0 or higher
+3. **MongoDB Community Server**: Running locally on port `27017`
+4. **MongoDB Compass** *(optional but recommended for visual database inspection)*
 
 ---
 
-## ⚙️ Environment Variables
+### Step 1: Install Dependencies
+From the repository root folder:
+```powershell
+npm run install:all
+```
+*Or install client and server individually:*
+```powershell
+cd server
+npm install
+cd ../client
+npm install
+```
 
-Create a `server/.env` file (a pre-configured template is available at `server/.env.example`):
+---
 
+### Step 2: Configure Environment Variables
+Verify or create `server/.env` (a template is provided in `server/.env.example`):
 ```ini
 PORT=5000
 NODE_ENV=development
@@ -120,55 +103,189 @@ JWT_SECRET=folio_super_secret_jwt_key_2026_knowledge_workspace
 CLIENT_URL=http://localhost:5173
 ```
 
-*Note: If `MONGODB_URI` cannot connect to a running instance within 2.5 seconds, Folio automatically activates its Embedded Data Engine, logging diagnostic output in the terminal.*
+---
+
+### Step 3: Seed the Database
+Populate your local MongoDB `folio` database with 12 rich technical notes, 5 collections, sample revisions, and an interactive mind map:
+```powershell
+npm run seed
+```
+*Or directly inside the server folder:*
+```powershell
+cd server
+node seed.js
+```
 
 ---
 
-## 📖 API Endpoints Reference
+### Step 4: Start the Application
+
+#### Option A: Concurrent Start (Single Terminal)
+From the project root:
+```powershell
+npm start
+```
+This concurrently launches:
+- **Frontend App**: `http://localhost:5173`
+- **Backend API Server**: `http://localhost:5000`
+
+---
+
+#### Option B: Separate Terminals (Recommended for Development)
+
+**Terminal 1 — Backend Server:**
+```powershell
+cd server
+npm run dev
+# or: node server.js
+```
+
+**Terminal 2 — Frontend App:**
+```powershell
+cd client
+npm run dev
+```
+
+---
+
+## 🔐 Default Demo Credentials
+
+Once the application is running, navigate to **http://localhost:5173**:
+
+- **Email**: `alex.chen@folio.workspace`
+- **Password**: `folio2026`
+- **Quick Access**: Click the **"1-Click Demo Sign In"** button on the login screen to authenticate instantly.
+
+---
+
+## 🧭 Viewing in MongoDB Compass
+
+To inspect the raw database records created by Folio:
+
+1. Open **MongoDB Compass**.
+2. Connect to the local server URI:
+   ```text
+   mongodb://localhost:27017
+   ```
+3. Click on the **`folio`** database in the left sidebar.
+4. You will see 5 collections:
+   - **`users`**: User profiles with bcrypt-hashed passwords and preferences
+   - **`notes`**: Note records with types, markdown content, tags, and cross-references
+   - **`collections`**: Color-coded category folders
+   - **`noterevisions`**: Historical version snapshots of notes
+   - **`mindmaps`**: Node-and-edge layout definitions for interactive canvases
+
+---
+
+## 🧪 Testing & Verification Scripts
+
+The backend includes built-in diagnostic test scripts:
+
+### Test Local MongoDB Connection
+```powershell
+cd server
+node test-db-connection.js
+```
+*Outputs MongoDB version, host, database name, connection status, and document counts across all collections.*
+
+### Test End-to-End API Routes
+```powershell
+cd server
+node test-api-e2e.js
+```
+*Tests authentication login, note queries, collection fetching, mind maps, and analytics generation against the live backend.*
+
+### Check API Server Health
+Visit in your browser or run:
+```powershell
+curl http://localhost:5000/api/health
+```
+Expected response:
+```json
+{
+  "status": "ok",
+  "name": "Folio API Server",
+  "version": "1.0.0",
+  "database": {
+    "isConnected": true,
+    "useEmbeddedFallback": false,
+    "type": "mongodb-local",
+    "host": "127.0.0.1",
+    "name": "folio"
+  }
+}
+```
+
+---
+
+## 📖 Complete API Reference
 
 ### Authentication (`/api/auth`)
-- `POST /api/auth/register` — Create new user account
-- `POST /api/auth/login` — Sign in and obtain JWT
-- `GET /api/auth/me` — Get authenticated user profile
-- `PUT /api/auth/profile` — Update display name and preferences
+| Method | Endpoint | Description |
+| :--- | :--- | :--- |
+| `POST` | `/api/auth/register` | Register a new user account |
+| `POST` | `/api/auth/login` | Authenticate credentials and receive JWT |
+| `GET` | `/api/auth/me` | Fetch currently logged-in user profile |
+| `PUT` | `/api/auth/profile` | Update profile name and UI preferences |
 
 ### Notes (`/api/notes`)
-- `GET /api/notes` — Query notes with search, type, collection, tag, and sort filters
-- `POST /api/notes` — Create note and log initial revision
-- `GET /api/notes/:id` — Retrieve note with populated links
-- `PUT /api/notes/:id` — Update note and save historical snapshot
-- `DELETE /api/notes/:id` — Delete note and revisions
-- `POST /api/notes/:id/duplicate` — Duplicate note
-- `PATCH /api/notes/:id/favorite` — Toggle starred status
-- `GET /api/notes/:id/revisions` — List revision history
-- `POST /api/notes/:id/revisions/:revisionId/restore` — Restore previous version
-- `GET /api/notes/tags` — Aggregated tag frequency list
+| Method | Endpoint | Description |
+| :--- | :--- | :--- |
+| `GET` | `/api/notes` | Query notes with search, type, collection, tag, favorite, and sort filters |
+| `POST` | `/api/notes` | Create a new note and record initial version revision |
+| `GET` | `/api/notes/:id` | Retrieve single note with populated related links |
+| `PUT` | `/api/notes/:id` | Update note and archive pre-edit revision snapshot |
+| `DELETE` | `/api/notes/:id` | Delete note and its associated revisions |
+| `POST` | `/api/notes/:id/duplicate`| Clone an existing note |
+| `PATCH`| `/api/notes/:id/favorite` | Toggle favorite star status |
+| `GET` | `/api/notes/:id/revisions`| Retrieve revision history list |
+| `POST` | `/api/notes/:id/revisions/:revisionId/restore` | Restore note content to a previous version |
+| `GET` | `/api/notes/tags` | List all unique tags and their occurrence frequencies |
 
 ### Collections (`/api/collections`)
-- `GET /api/collections` — List collections with real-time note counts
-- `POST /api/collections` — Create new collection
-- `GET /api/collections/:id` — Get collection details and its notes
-- `PUT /api/collections/:id` — Update collection
-- `DELETE /api/collections/:id` — Safe deletion (unassigns notes)
+| Method | Endpoint | Description |
+| :--- | :--- | :--- |
+| `GET` | `/api/collections` | List all collections with real-time note counts |
+| `POST` | `/api/collections` | Create a new category collection |
+| `GET` | `/api/collections/:id` | Get collection details and assigned notes |
+| `PUT` | `/api/collections/:id` | Update collection name, color, and description |
+| `DELETE`| `/api/collections/:id`| Delete collection (unassigns associated notes cleanly) |
 
 ### Mind Maps (`/api/mindmaps`)
-- `GET /api/mindmaps` — List user's saved mind maps
-- `POST /api/mindmaps` — Create new mind map
-- `GET /api/mindmaps/:id` — Retrieve mind map nodes and edges
-- `PUT /api/mindmaps/:id` — Persist changes to nodes and connections
-- `DELETE /api/mindmaps/:id` — Delete mind map
+| Method | Endpoint | Description |
+| :--- | :--- | :--- |
+| `GET` | `/api/mindmaps` | List all mind maps for user |
+| `POST` | `/api/mindmaps` | Create a new mind map |
+| `GET` | `/api/mindmaps/:id` | Get mind map node and edge structure |
+| `PUT` | `/api/mindmaps/:id` | Save modified node positions, labels, and links |
+| `DELETE`| `/api/mindmaps/:id` | Delete a mind map |
 
 ### Analytics (`/api/analytics`)
-- `GET /api/analytics?days=30` — Compute activity timeline, distribution, tags, word counts, and graph connectivity
+| Method | Endpoint | Description |
+| :--- | :--- | :--- |
+| `GET` | `/api/analytics?days=30` | Calculate activity timeline, word counts, collection balance, type distributions, and weekly velocity |
 
 ---
 
-## 🧪 Verification & Demonstration Steps
+## 🛠️ Windows Troubleshooting
 
-1. **Dashboard Check**: Sign in with 1-Click Demo login (`alex.chen@folio.workspace`). Verify greeting, overview statistics cards, notes activity graph, and category distribution donut.
-2. **Notes Management**: Switch between Grid and List views. Filter by "Code" or "Research", sort by Title or Date. Open a note to edit, add a tag, and toggle star.
-3. **Smart Search**: Press `Ctrl + K` (or `Cmd + K`). Type keywords like "event loop" or "aws" to see instant filtering and keyboard selection.
-4. **Knowledge Graph**: Navigate to **Knowledge Graph**. Pan, zoom, click a node to open the slide-over inspection drawer, and test the collection/type filters.
-5. **Mind Maps**: Open **Mind Maps**. Double-click a node to edit text, click **+** to sprout connected child nodes, or click a linked note badge to open the source note. Save canvas changes.
-6. **Version History**: Edit a note title or content, open the **Version History** modal, compare the previous snapshot, and test **Restore This Version**.
-7. **Vault Export**: Go to **Settings** and click **Download Full Vault Backup** to receive a JSON archive of all notes and mind maps.
+### 1. MongoDB Service Not Running
+If the backend logs `Server startup aborted: Failed to establish MongoDB connection`:
+1. Open an Administrator Command Prompt or PowerShell:
+   ```cmd
+   net start MongoDB
+   ```
+2. Or press `Win + R`, type `services.msc`, locate **MongoDB Server (MongoDB)**, right-click, and select **Start**.
+
+### 2. Port Already in Use
+- **Port 5000** (Backend):
+  ```powershell
+  Get-Process -Id (Get-NetTCPConnection -LocalPort 5000).OwningProcess | Stop-Process -Force
+  ```
+- **Port 5173** (Frontend Vite):
+  Vite will automatically offer the next available port (e.g. `5174`), or you can terminate the existing process.
+
+---
+
+## 📄 License
+This project is developed for educational and portfolio demonstration purposes. All rights reserved.
