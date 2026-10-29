@@ -1,5 +1,6 @@
 const express = require('express');
 const router = express.Router();
+const mongoose = require('mongoose');
 const NoteModel = require('../models/Note');
 const NoteRevisionModel = require('../models/NoteRevision');
 const CollectionModel = require('../models/Collection');
@@ -146,18 +147,29 @@ router.post('/', async (req, res) => {
       ? tags.map(t => String(t).trim().toLowerCase()).filter(Boolean)
       : [];
 
+    let sanitizedCollectionId = null;
+    if (collectionId && typeof collectionId === 'string' && collectionId.trim() !== '' && collectionId !== 'unassigned' && collectionId !== 'undefined' && collectionId !== 'null') {
+      if (mongoose.Types.ObjectId.isValid(collectionId)) {
+        sanitizedCollectionId = collectionId;
+      }
+    }
+
+    const sanitizedRelatedNotes = Array.isArray(relatedNotes)
+      ? relatedNotes.filter(rn => rn && rn !== 'undefined' && rn !== 'null' && mongoose.Types.ObjectId.isValid(String(rn)))
+      : [];
+
     const newNote = await NoteModel.create({
       user: userId,
       title: title.trim(),
       content,
       type,
       tags: cleanedTags,
-      collectionId: collectionId || null,
+      collectionId: sanitizedCollectionId,
       isFavorite: !!isFavorite,
       isPinned: !!isPinned,
       codeLanguage,
       sourceUrl: (sourceUrl || '').trim(),
-      relatedNotes: Array.isArray(relatedNotes) ? relatedNotes : []
+      relatedNotes: sanitizedRelatedNotes
     });
 
     // Create initial revision entry
@@ -279,12 +291,22 @@ router.put('/:id', async (req, res) => {
     if (tags !== undefined) {
       updates.tags = Array.isArray(tags) ? tags.map(t => String(t).trim().toLowerCase()).filter(Boolean) : [];
     }
-    if (collectionId !== undefined) updates.collectionId = collectionId || null;
+    if (collectionId !== undefined) {
+      if (collectionId && typeof collectionId === 'string' && collectionId.trim() !== '' && collectionId !== 'unassigned' && collectionId !== 'undefined' && collectionId !== 'null' && mongoose.Types.ObjectId.isValid(collectionId)) {
+        updates.collectionId = collectionId;
+      } else {
+        updates.collectionId = null;
+      }
+    }
     if (isFavorite !== undefined) updates.isFavorite = !!isFavorite;
     if (isPinned !== undefined) updates.isPinned = !!isPinned;
     if (codeLanguage !== undefined) updates.codeLanguage = codeLanguage;
     if (sourceUrl !== undefined) updates.sourceUrl = (sourceUrl || '').trim();
-    if (relatedNotes !== undefined) updates.relatedNotes = Array.isArray(relatedNotes) ? relatedNotes : [];
+    if (relatedNotes !== undefined) {
+      updates.relatedNotes = Array.isArray(relatedNotes)
+        ? relatedNotes.filter(rn => rn && rn !== 'undefined' && rn !== 'null' && mongoose.Types.ObjectId.isValid(String(rn)))
+        : [];
+    }
 
     const updated = await NoteModel.findByIdAndUpdate(req.params.id, updates, { new: true });
 

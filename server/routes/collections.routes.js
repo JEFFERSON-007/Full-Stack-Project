@@ -6,6 +6,22 @@ const authMiddleware = require('../middleware/auth');
 
 router.use(authMiddleware);
 
+const serializeCollection = (col, noteCount = 0) => {
+  if (!col) return null;
+  const raw = col.toJSON ? col.toJSON() : (col.toObject ? col.toObject() : (col._doc || col));
+  const id = String(raw.id || raw._id || col._id || col.id);
+  return {
+    ...raw,
+    id,
+    _id: id,
+    name: raw.name || col.name,
+    description: raw.description !== undefined ? raw.description : col.description,
+    color: raw.color || col.color || '#596A50',
+    icon: raw.icon || col.icon || 'folder',
+    noteCount: typeof noteCount === 'number' ? noteCount : (raw.noteCount || 0)
+  };
+};
+
 // GET /api/collections - List user's collections with note counts
 router.get('/', async (req, res) => {
   try {
@@ -20,10 +36,7 @@ router.get('/', async (req, res) => {
     const collectionsWithCounts = collections.map(col => {
       const colId = String(col._id || col.id);
       const count = notes.filter(n => String(n.collectionId) === colId).length;
-      return {
-        ...col,
-        noteCount: count
-      };
+      return serializeCollection(col, count);
     });
 
     res.json({
@@ -59,10 +72,7 @@ router.post('/', async (req, res) => {
 
     res.status(201).json({
       success: true,
-      collection: {
-        ...newCollection,
-        noteCount: 0
-      }
+      collection: serializeCollection(newCollection, 0)
     });
   } catch (err) {
     console.error('Error creating collection:', err);
@@ -88,10 +98,7 @@ router.get('/:id', async (req, res) => {
 
     res.json({
       success: true,
-      collection: {
-        ...collection,
-        noteCount: notes.length
-      },
+      collection: serializeCollection(collection, notes.length),
       notes
     });
   } catch (err) {
@@ -123,7 +130,7 @@ router.put('/:id', async (req, res) => {
 
     res.json({
       success: true,
-      collection: updated
+      collection: serializeCollection(updated)
     });
   } catch (err) {
     res.status(500).json({ success: false, message: 'Failed to update collection.', error: err.message });

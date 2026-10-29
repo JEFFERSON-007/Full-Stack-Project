@@ -17,14 +17,23 @@ import {
   Plus
 } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
+import { Collection } from '../../types';
 
 interface SidebarProps {
   onOpenNewNote: () => void;
+  collections?: Collection[];
+  onOpenNewCollection?: () => void;
   mobileOpen?: boolean;
   onCloseMobile?: () => void;
 }
 
-export const Sidebar: React.FC<SidebarProps> = ({ onOpenNewNote, mobileOpen, onCloseMobile }) => {
+export const Sidebar: React.FC<SidebarProps> = ({
+  onOpenNewNote,
+  collections = [],
+  onOpenNewCollection,
+  mobileOpen,
+  onCloseMobile
+}) => {
   const { user, logout } = useAuth();
   const navigate = useNavigate();
   const [userMenuOpen, setUserMenuOpen] = useState(false);
@@ -114,6 +123,64 @@ export const Sidebar: React.FC<SidebarProps> = ({ onOpenNewNote, mobileOpen, onC
                 )}
               </NavLink>
             ))}
+          </nav>
+        </div>
+
+        {/* Collections in Sidebar */}
+        <div>
+          <div className="flex items-center justify-between px-3 mb-2">
+            <NavLink
+              to="/collections"
+              className="text-[10px] font-semibold tracking-wider text-charcoal-500 uppercase hover:text-charcoal-900 transition-colors"
+            >
+              Collections {collections && collections.length > 0 && `(${collections.length})`}
+            </NavLink>
+            {onOpenNewCollection && (
+              <button
+                type="button"
+                onClick={onOpenNewCollection}
+                title="Create new collection"
+                className="p-1 rounded hover:bg-paper-300 text-charcoal-500 hover:text-charcoal-800 transition-colors"
+              >
+                <Plus className="w-3.5 h-3.5" />
+              </button>
+            )}
+          </div>
+          <nav className="space-y-1">
+            {collections && collections.length > 0 ? (
+              collections.map((col) => {
+                const colId = col._id || col.id;
+                return (
+                  <NavLink
+                    key={colId}
+                    to={`/notes?collectionId=${colId}`}
+                    onClick={onCloseMobile}
+                    className={({ isActive }) =>
+                      `flex items-center gap-2.5 px-3 py-1.5 rounded-lg text-xs font-medium transition-all ${
+                        isActive
+                          ? 'bg-paper-300 text-charcoal-900 font-semibold'
+                          : 'text-charcoal-700 hover:bg-paper-300/60 hover:text-charcoal-900'
+                      }`
+                    }
+                  >
+                    <span
+                      className="w-2.5 h-2.5 rounded-full flex-shrink-0"
+                      style={{ backgroundColor: col.color || '#596A50' }}
+                    />
+                    <span className="truncate flex-1">{col.name}</span>
+                    {typeof col.noteCount === 'number' && (
+                      <span className="text-[10px] text-charcoal-400 font-mono">
+                        {col.noteCount}
+                      </span>
+                    )}
+                  </NavLink>
+                );
+              })
+            ) : (
+              <div className="px-3 py-1 text-[11px] text-charcoal-400 italic">
+                No collections yet
+              </div>
+            )}
           </nav>
         </div>
 

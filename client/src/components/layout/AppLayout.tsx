@@ -104,6 +104,11 @@ export const AppLayout: React.FC = () => {
       {/* Sidebar */}
       <Sidebar
         onOpenNewNote={handleOpenNewNote}
+        collections={collections}
+        onOpenNewCollection={() => {
+          setEditingCollection(null);
+          setCollectionModalOpen(true);
+        }}
         mobileOpen={mobileSidebarOpen}
         onCloseMobile={() => setMobileSidebarOpen(false)}
       />
